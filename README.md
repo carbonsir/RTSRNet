@@ -11,14 +11,14 @@ RTSRNet is a depth-assisted camouflaged object detection framework that formulat
 The framework contains two main modules:
 
 - **SGDEM — Semantic-Geometric Detail Enhancement Module:** establishes a semantic-guided reference for ambiguous shallow responses and combines semantic discrepancy with depth-derived geometry to refine shallow representations.
-- **TGMM — Target-guided Geometry Modulation Module:** transforms raw depth-derived geometry into target-aware geometry and uses it to progressively refine decoder representations.
+- **TGMM — Target-Guided Geometry Modulation Module:** transforms raw depth-derived geometry into target-aware geometry and uses it to progressively refine decoder representations.
 
 ---
 
 ## News
 
 - **2026:** RTSRNet manuscript submitted to **IEEE Transactions on Multimedia (TMM)**.
-- Code, trained weights, prepared RGB/depth data, prediction maps, and evaluation scripts are provided for reproducibility.
+- Code, trained weights, prepared depth maps, training edge maps, prediction maps, and evaluation scripts are provided for reproducibility.
 
 ---
 
@@ -74,7 +74,7 @@ RTSRNet produces cleaner and more coherent predictions under texture ambiguity, 
   <b>Fig. 8.</b> Qualitative ablation of SGDEM and TGMM under the same EfficientNet-B0 backbone. The single-module variants are compared with the baseline and the full RTSRNet-E.
 </p>
 
-The visual comparison shows the complementary effects of SGDEM and TGMM: SGDEM suppresses distracting shallow responses and preserves local structures, while TGMM improves target coherence through target-guided geometry refinement.
+The visual comparison shows the complementary effects of SGDEM and TGMM. SGDEM suppresses distracting shallow responses and preserves local structures, while TGMM improves target coherence through target-guided geometry refinement.
 
 ---
 
@@ -86,18 +86,35 @@ The visual comparison shows the complementary effects of SGDEM and TGMM: SGDEM s
 |---|---|---:|---|
 | RTSRNet-E | EfficientNet-B0 | 384×384 | [Google Drive](https://drive.google.com/file/d/1u7_Jdv6xFtnHYQkn2B2jBnKzlB5ppc2J/view?usp=drive_link) |
 
-### Training and Testing Data
+### Original RGB Images and Ground-Truth Masks
 
-RTSRNet is trained with **2,026 COD10K training images + 1,000 CAMO training images** and evaluated on **CAMO (250)**, **COD10K (2,026)**, and **NC4K (4,121)**.
+The original RGB images and ground-truth (GT) masks are **not redistributed in this repository**. Please download them from the official dataset sources and follow the licenses and terms of use of the corresponding datasets.
 
-For reproducibility, we provide the prepared depth maps used by RTSRNet and the corresponding dataset organization files.
+| Dataset | Usage in RTSRNet | Official Source |
+|---|---|---|
+| CAMO | Training and testing | [CAMO Official Project Page](https://sites.google.com/view/ltnghia/research/camo) / [Official Download](https://drive.google.com/drive/folders/1h-OqZdwkuPhBvGcVAwmh0f1NGqlH_4B6?usp=drive_link) |
+| COD10K | Training and testing | [COD10K / SINet Official Repository](https://github.com/DengPingFan/SINet) |
+| NC4K | Testing | [NC4K Official Project Repository](https://github.com/JingZhang617/COD-Rank-Localize-and-Segment) / [Official Download](https://drive.google.com/file/d/1kzpX_U3gbgO9MuwZIWTuRVpiB7V6yrAQ/view?usp=sharing) |
+
+For convenience, the official SINet repository provides the commonly used COD training and testing splits:
+
+- [COD Training Set](https://drive.google.com/file/d/1D9bf1KeeCJsxxri6d2qAC7z6O1X_fxpt/view?usp=sharing)
+- [COD Testing Sets](https://drive.google.com/file/d/1QEGnP9O7HbN_2tH999O3HRIsErIVYalx/view?usp=sharing)
+
+RTSRNet is trained using the CAMO and COD10K training data and evaluated on CAMO, COD10K, and NC4K. Please use the same dataset split described in the manuscript when reproducing the reported results.
+
+### Prepared Depth Maps and Edge Maps
+
+To facilitate reproduction of the RGB-D inputs and edge supervision used in our experiments, we provide only the **prepared depth maps** and **training edge maps**. The original RGB images and GT masks should be obtained from the official dataset sources above.
 
 | Resource | Content | Download |
 |---|---|---|
-| Depth Maps | Train/Test depth maps for CAMO, COD10K, and NC4K | [Google Drive](https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link) |
-| COD Datasets | Images, GT masks, and edge maps for CAMO, COD10K, and NC4K | [Google Drive](https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link) |
+| Depth Maps | Prepared train/test depth maps for CAMO, COD10K, and NC4K | [Google Drive](https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link) |
+| Edge Maps | Edge supervision maps used for training | [Google Drive](https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link) |
 
 The default depth maps used in the manuscript are generated offline with **Depth Anything V2**.
+
+> **Note:** The edge-map download should contain only the derived edge supervision maps. It does not include or redistribute the original RGB images or GT masks.
 
 ### Prediction Maps / Test Results
 
@@ -121,6 +138,11 @@ pip install -r requirements.txt
 
 ```text
 RTSRNet/
+├── assets/
+│   ├── Fig2_Overview.png
+│   ├── table1.png
+│   ├── Fig7_Qtt.png
+│   └── Fig8_Abla.png
 ├── Model/
 │   ├── RTSRNet.py
 │   ├── EfficientNet.py
@@ -136,11 +158,17 @@ RTSRNet/
 ├── profile_model.py
 ├── analyze_internal_responses.py
 ├── requirements.txt
+├── LICENSE
 └── README.md
 ```
+
 ---
 
-## Dataset Organization
+## Dataset Preparation
+
+After downloading the original RGB images and GT masks from the official dataset sources, place the prepared depth maps and edge maps into the corresponding directories.
+
+The expected directory structure is:
 
 ```text
 DATA_ROOT/
@@ -153,19 +181,20 @@ DATA_ROOT/
     ├── CAMO/
     │   ├── Imgs/
     │   ├── GT/
-    │   ├── Depth/
-    │   └── Edge/
+    │   └── Depth/
     ├── COD10K/
     │   ├── Imgs/
     │   ├── GT/
-    │   ├── Depth/
-    │   └── Edge/
+    │   └── Depth/
     └── NC4K/
         ├── Imgs/
         ├── GT/
-        ├── Depth/
-        └── Edge/
+        └── Depth/
 ```
+
+The `Imgs/` and `GT/` directories should come from the official datasets. The `Depth/` directories should contain the prepared depth maps provided above. The training `Edge/` directory should contain the provided edge supervision maps.
+
+Please make sure that the RGB image, GT mask, depth map, and training edge map corresponding to the same sample use matching filenames.
 
 ---
 
@@ -207,6 +236,8 @@ python inference.py \
   --ablation_mode full
 ```
 
+The generated prediction maps are saved according to the output path configured in the inference script.
+
 ---
 
 ## Evaluation
@@ -219,12 +250,12 @@ python evaluate.py \
   --save_json
 ```
 
-Metrics:
+The evaluation reports the following metrics:
 
-- **Sα**: structure measure
-- **Eφad**: adaptive enhanced-alignment measure
-- **Fβω**: weighted F-measure
-- **M**: mean absolute error
+- **Sα** — structure measure
+- **Eφad** — adaptive enhanced-alignment measure
+- **Fβω** — weighted F-measure
+- **M** — mean absolute error
 
 ---
 
@@ -241,17 +272,20 @@ If you find RTSRNet useful in your research, please cite our work:
 }
 ```
 
-After acceptance/publication, replace this entry with the official IEEE Xplore BibTeX record and DOI.
+The citation entry will be updated with the official IEEE Xplore record and DOI after publication.
 
 ---
 
 ## Acknowledgements
 
-We thank the authors of CAMO, COD10K, NC4K, Depth Anything V2, and the open-source COD community for their datasets and implementations.
+We thank the authors of **CAMO**, **COD10K**, **NC4K**, **Depth Anything V2**, and the open-source camouflaged object detection community for making their datasets, models, and implementations available to the research community.
+
+The original datasets remain subject to their respective licenses and terms of use. Users should download CAMO, COD10K, and NC4K from the official sources listed above and cite the corresponding dataset papers when using them.
+
+---
 
 ## License
 
-The source code of RTSRNet is released under the MIT License. Please see the `LICENSE` file for details.
+The source code of RTSRNet is released under the **MIT License**. Please see the `LICENSE` file for details.
 
-The datasets and third-party resources used in this project are subject to their respective licenses and terms of use.
-
+The MIT License applies only to the RTSRNet source code for which the authors hold the necessary rights. Third-party code, pretrained models, datasets, and other external resources remain subject to their respective licenses and terms of use.

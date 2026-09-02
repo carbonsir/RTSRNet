@@ -47,6 +47,7 @@ Quantitative comparison with state-of-the-art camouflaged object detection metho
 <p align="center">
   <b>Table I.</b> Quantitative comparison with state-of-the-art methods.
 </p>
+
 ---
 
 ## Qualitative Comparison
@@ -176,32 +177,6 @@ DATA_ROOT/
 
 ---
 
-## Model
-
-```python
-from Model.RTSRNet import RTSRNet
-
-model = RTSRNet(
-    pretrained=True,
-    ablation_mode="full",
-)
-```
-
-### Load Trained Weights
-
-```python
-import torch
-from Model.RTSRNet import RTSRNet, extract_state_dict
-
-model = RTSRNet(pretrained=False, ablation_mode="full")
-checkpoint = torch.load("RTSRNet-E.pth", map_location="cpu")
-state_dict = extract_state_dict(checkpoint, use_ema=True)
-model.load_state_dict(state_dict, strict=True)
-model.eval()
-```
-
----
-
 ## Training
 
 ```bash
@@ -261,16 +236,6 @@ Metrics:
 
 ---
 
-## Internal Response Visualization
-
-```bash
-python analyze_internal_responses.py --help
-```
-
-This script supports the supplementary qualitative analysis of SGDEM and TGMM internal responses.
-
----
-
 ## Citation
 
 If you find RTSRNet useful in your research, please cite our work:
@@ -285,13 +250,6 @@ If you find RTSRNet useful in your research, please cite our work:
 ```
 
 After acceptance/publication, replace this entry with the official IEEE Xplore BibTeX record and DOI.
-
----
-
-## Contact
-
-- **Tan Song:** 1223114@s.hlju.edu.cn
-- **Jinbao Li:** lijinb@sdas.org
 
 ---
 

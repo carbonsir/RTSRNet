@@ -94,8 +94,8 @@ For exact reproduction, release the RGB images, masks, edge maps, and the **Dept
 
 | Resource | Content | Download |
 |---|---|---|
-| Depth Maps | Train/Test Depth Maps (CAMO, COD10K, NC4K) | [Google Drive]([YOUR_TRAIN_RGB_DEPTH_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link)) |
-| RGB Maps | Train/Test RGB Maps (CAMO, COD10K, NC4K) | [Google Drive]([YOUR_TEST_RGB_DEPTH_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link)) |
+| Depth Maps | Train/Test Depth Maps (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link]) |
+| RGB Maps | Train/Test RGB Maps (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link]) |
 
 Original RGB/GT datasets:
 
@@ -111,7 +111,7 @@ The default depth maps in the manuscript are generated offline with **Depth Anyt
 
 | Results | Download |
 |---|---|
-| RTSRNet-E prediction maps on CAMO / COD10K / NC4K | [Google Drive]([YOUR_RTSRNET_PREDICTIONS_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/1SMPq3khh-XdGtE1ztP8npW6vGxyHU6VG/view?usp=drive_link)) |
+| RTSRNet-E prediction maps on CAMO / COD10K / NC4K | [Google Drive]([[YOUR_RTSRNET_PREDICTIONS_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/1SMPq3khh-XdGtE1ztP8npW6vGxyHU6VG/view?usp=drive_link)]()) |
 
 ---
 

@@ -94,8 +94,8 @@ For exact reproduction, release the RGB images, masks, edge maps, and the **Dept
 
 | Resource | Content | Download |
 |---|---|---|
-| RTSRNet Training Set | CAMO-train + COD10K-train; RGB / GT / Depth / Edge | [Google Drive](YOUR_TRAIN_RGB_DEPTH_GOOGLE_DRIVE_URL) / [Baidu Netdisk](YOUR_TRAIN_RGB_DEPTH_BAIDU_URL) |
-| RTSRNet Testing Sets | CAMO-test + COD10K-test + NC4K; RGB / GT / Depth / Edge | [Google Drive](YOUR_TEST_RGB_DEPTH_GOOGLE_DRIVE_URL) / [Baidu Netdisk](YOUR_TEST_RGB_DEPTH_BAIDU_URL) |
+| Depth Maps | Train/Test Depth Maps (CAMO, COD10K, NC4K) | [Google Drive]([YOUR_TRAIN_RGB_DEPTH_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link)) / [Baidu Netdisk](YOUR_TRAIN_RGB_DEPTH_BAIDU_URL) |
+| RGB Maps | Train/Test RGB Maps (CAMO, COD10K, NC4K) | [Google Drive]([YOUR_TEST_RGB_DEPTH_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link)) / [Baidu Netdisk](YOUR_TEST_RGB_DEPTH_BAIDU_URL) |
 
 Original RGB/GT datasets:
 

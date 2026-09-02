@@ -84,7 +84,7 @@ The visual comparison shows the complementary effects of SGDEM and TGMM: SGDEM s
 
 | Model | Backbone | Input Size | Download |
 |---|---|---:|---|
-| RTSRNet-E | EfficientNet-B0 | 384×384 | [Google Drive]([YOUR_RTSRNET_E_PTH_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/1u7_Jdv6xFtnHYQkn2B2jBnKzlB5ppc2J/view?usp=drive_link))|
+| RTSRNet-E | EfficientNet-B0 | 384×384 | [Google Drive]([https://drive.google.com/file/d/1u7_Jdv6xFtnHYQkn2B2jBnKzlB5ppc2J/view?usp=drive_link])|
 
 ### Training and Testing Data
 
@@ -95,13 +95,7 @@ For exact reproduction, release the RGB images, masks, edge maps, and the **Dept
 | Resource | Content | Download |
 |---|---|---|
 | Depth Maps | Train/Test Depth Maps (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link]) |
-| RGB Maps | Train/Test RGB Maps (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link]) |
-
-Original RGB/GT datasets:
-
-- **CAMO:** https://drive.google.com/open?id=1h-OqZdwkuPhBvGcVAwmh0f1NGqlH_4B6
-- **COD10K:** https://drive.google.com/file/d/1vRYAie0JcNStcSwagmCq55eirGyMYGm5/view?usp=sharing
-- **NC4K:** https://drive.google.com/file/d/1kzpX_U3gbgO9MuwZIWTuRVpiB7V6yrAQ/view?usp=sharing
+| COD_Datasets | Imgs, GT, Edge (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link]) |
 
 The default depth maps in the manuscript are generated offline with **Depth Anything V2**:
 
@@ -111,7 +105,7 @@ The default depth maps in the manuscript are generated offline with **Depth Anyt
 
 | Results | Download |
 |---|---|
-| RTSRNet-E prediction maps on CAMO / COD10K / NC4K | [Google Drive]([[YOUR_RTSRNET_PREDICTIONS_GOOGLE_DRIVE_URL](https://drive.google.com/file/d/1SMPq3khh-XdGtE1ztP8npW6vGxyHU6VG/view?usp=drive_link)]()) |
+| RTSRNet-E prediction maps on CAMO / COD10K / NC4K | [Google Drive]([https://drive.google.com/file/d/1SMPq3khh-XdGtE1ztP8npW6vGxyHU6VG/view?usp=drive_link]) |
 
 ---
 

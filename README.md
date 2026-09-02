@@ -1,71 +1,154 @@
 # RTSRNet
 
-Official code release for **RTSRNet: Residual Target-Sensitive Refinement Network for Depth-Assisted Camouflaged Object Detection**.
+## Residual Target-Sensitive Refinement Network for Depth-Assisted Camouflaged Object Detection
 
-RTSRNet formulates refinement-stage cue utilization as **target-sensitive cue refinement**. Instead of directly treating shallow detail and depth-derived geometry as uniformly reliable content, the network uses target-related context to regulate how these ambiguous cues update task representations.
+**Tan Song, Jinbao Li**
 
-> **Code-release note.** This repository is a paper-facing refactor of the provided `GoodRT_v2` implementation. The module/class names have been aligned with the manuscript while the trained forward tensor operations are intentionally preserved so that existing `GoodRT_v2` checkpoints can still be loaded. Legacy `state_dict` keys are converted automatically.
+> Manuscript submitted to **IEEE Transactions on Multimedia (TMM)**.
 
-## Highlights
+RTSRNet is a depth-assisted camouflaged object detection framework that formulates refinement-stage cue utilization as **target-sensitive cue refinement**. Instead of directly treating shallow detail and depth-derived geometry as uniformly reliable content, RTSRNet uses target-related context to regulate how ambiguous cues update task representations.
 
-- **SGDEM — Semantic-Geometric Detail Enhancement Module.** Establishes a semantic-guided reference for ambiguous shallow responses and performs depth-conditioned shallow refinement.
-- **SGDB — Semantic-guided Detail Block.** Uses shallow detail to query high-level semantics and constructs a semantic-guided response.
-- **DCUB — Depth-Conditioned Update Block.** Performs the trained encoder-side controlled update used by SGDEM.
-- **TGMM — Target-guided Geometry Modulation Module.** Provides decoder-stage target-conditioned geometry refinement.
-- **GCDUB — Geometry-Conditioned Decoder Update Block.** Paper-facing name for the trained decoder update/refinement block.
-- **Legacy checkpoint compatibility.** Original `.pth` files saved with `GSDTNet`, `gsdt`, `dls_p*`, `mask*`, etc. are remapped on load without changing tensor values.
+The framework contains two main modules:
 
-## Repository Structure
+- **SGDEM — Semantic-Geometric Detail Enhancement Module:** establishes a semantic-guided reference for ambiguous shallow responses and combines semantic discrepancy with depth-derived geometry to refine shallow representations.
+- **TGMM — Target-guided Geometry Modulation Module:** transforms raw depth-derived geometry into target-aware geometry and uses it to progressively refine decoder representations.
 
-```text
-RTSRNet/
-├── Model/
-│   ├── RTSRNet.py              # RTSRNet, SGDEM, SGDB, DCUB, TGMM, GCDUB
-│   ├── GSDTNet.py              # deprecated compatibility import shim
-│   ├── EfficientNet.py
-│   ├── modules.py
-│   └── __init__.py
-├── utils/
-│   ├── config.py
-│   ├── edge_dataloader.py
-│   ├── metrics.py
-│   └── utils.py
-├── tools/
-│   └── check_checkpoint.py     # strict legacy/new checkpoint validation
-├── tests/
-│   └── test_checkpoint_compat.py
-├── train.py
-├── inference.py
-├── evaluate.py
-├── profile_model.py
-├── analyze_internal_responses.py
-├── go.py
-├── go.sh
-├── requirements.txt
-├── MIGRATION.md
-└── README.md
-```
+---
 
-## Paper-to-Code Mapping
+## News
 
-| Manuscript term | Code |
+- **2026:** RTSRNet manuscript submitted to **IEEE Transactions on Multimedia (TMM)**.
+- Code, trained weights, prepared RGB/depth data, prediction maps, and evaluation scripts are provided for reproducibility.
+
+---
+
+## Overview of RTSRNet
+
+<p align="center">
+  <img src="assets/Fig2_Overview.png" width="100%">
+</p>
+
+<p align="center">
+  <b>Overview of RTSRNet.</b> RGB and depth inputs are encoded with SGDEM for shallow refinement and TGMM for multi-scale decoder refinement.
+</p>
+
+Given an RGB image and its estimated depth map, RTSRNet first performs RGB-D projection and hierarchical feature extraction. SGDEM refines the shallow encoder representation using detail, semantic, and depth-derived geometric information. The decoder then applies TGMM at multiple stages to convert raw geometry into target-aware guidance and progressively refine the decoder states.
+
+---
+
+## Main Results
+
+### Table I. Quantitative Comparison
+
+Quantitative comparison with representative COD methods on **CAMO**, **COD10K**, and **NC4K**. The best and second-best results within each group are shown in **bold** and <u>underlined</u>, respectively.
+
+| Method | Pub. | Input | Backbone | CAMO Sα | CAMO Eφad | CAMO Fβω | CAMO M | COD10K Sα | COD10K Eφad | COD10K Fβω | COD10K M | NC4K Sα | NC4K Eφad | NC4K Fβω | NC4K M |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **RGB-based COD Methods** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| SINet | CVPR'20 | 352×352 | ResNet50 | 0.751 | 0.834 | 0.606 | 0.100 | 0.776 | 0.867 | 0.631 | 0.043 | 0.808 | 0.883 | 0.723 | 0.058 |
+| SINetV2 | TPAMI'21 | 352×352 | ResNet50 | 0.820 | 0.884 | 0.743 | 0.070 | 0.815 | 0.864 | 0.680 | 0.037 | 0.847 | 0.901 | 0.770 | 0.048 |
+| FEDER | CVPR'23 | 384×384 | ResNet50 | 0.802 | 0.877 | 0.738 | 0.071 | 0.822 | 0.902 | 0.716 | 0.032 | 0.847 | 0.913 | 0.789 | 0.044 |
+| PUENet | TIP'23 | 512×512 | Res2Net50 | 0.794 | 0.861 | 0.722 | 0.077 | 0.809 | 0.884 | 0.687 | 0.037 | 0.835 | 0.892 | 0.762 | 0.049 |
+| DINet | TMM'24 | 400×400 | Res2Net50 | 0.821 | 0.883 | 0.790 | 0.068 | 0.832 | 0.901 | 0.744 | 0.031 | 0.856 | 0.910 | 0.820 | 0.043 |
+| FSEL | ECCV'24 | 416×416 | PVTv2-B4 | 0.822 | 0.892 | 0.758 | 0.067 | 0.838 | 0.900 | 0.724 | 0.029 | 0.855 | 0.913 | 0.792 | 0.042 |
+| CamoFormer | TPAMI'24 | 384×384 | PVTv2-B4 | 0.816 | 0.884 | 0.756 | 0.066 | 0.836 | 0.898 | 0.730 | 0.029 | 0.858 | 0.914 | 0.793 | 0.041 |
+| ESNet-S | KBS'25 | 384×384 | SMT-B | <u>0.877</u> | **0.934** | <u>0.861</u> | <u>0.044</u> | 0.871 | 0.935 | 0.811 | 0.022 | 0.893 | <u>0.941</u> | <u>0.870</u> | 0.030 |
+| ESCNet | ICCV'25 | 416×416 | PVTv2-B4 | 0.871 | <u>0.932</u> | 0.843 | <u>0.044</u> | 0.873 | 0.936 | 0.804 | <u>0.021</u> | 0.892 | 0.938 | 0.859 | <u>0.028</u> |
+| FBD-Net | TOMM'25 | 384×384 | PVTv2-B4 | **0.881** | 0.931 | 0.844 | **0.043** | 0.877 | 0.935 | 0.799 | 0.022 | 0.893 | 0.939 | 0.852 | 0.030 |
+| CSFIN | ESWA'25 | 384×384 | SMT-T | 0.876 | 0.929 | 0.832 | 0.047 | 0.868 | 0.930 | 0.780 | 0.023 | 0.890 | 0.937 | 0.842 | 0.031 |
+| MCSWA-Net | TMM'26 | 512×512 | PVTv2-B4 | <u>0.877</u> | 0.926 | **0.877** | 0.046 | **0.886** | <u>0.940</u> | <u>0.817</u> | **0.020** | <u>0.894</u> | 0.937 | 0.854 | 0.031 |
+| PONet | PR'26 | 384×384 | PVTv2-B4 | 0.874 | 0.929 | 0.833 | 0.045 | 0.874 | 0.934 | 0.792 | 0.022 | 0.892 | 0.938 | 0.848 | 0.030 |
+| ZoomingCOD | TMM'26 | 512×512 | Mamba | 0.874 | 0.929 | 0.833 | 0.045 | <u>0.880</u> | **0.941** | **0.825** | **0.020** | **0.906** | **0.945** | **0.872** | **0.022** |
+| **Depth-assisted COD Methods** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| DaCOD | ACM MM'23 | 448×448 | SMT-B | 0.855 | 0.911 | 0.796 | 0.051 | 0.840 | 0.908 | 0.729 | 0.028 | 0.874 | 0.923 | 0.814 | 0.035 |
+| PopNet | ICCV'23 | 352×352 | — | 0.806 | 0.869 | 0.821 | 0.073 | 0.827 | 0.897 | 0.789 | 0.031 | 0.852 | 0.908 | 0.851 | 0.043 |
+| DAF-Net | IVC'24 | 352×352 | ResNet50 | 0.860 | 0.913 | 0.799 | 0.051 | 0.838 | 0.899 | 0.715 | 0.031 | 0.865 | 0.909 | 0.792 | 0.042 |
+| DSAM | ACM MM'24 | 1024×1024 | SAM-B | 0.832 | 0.920 | 0.794 | 0.061 | 0.845 | 0.931 | 0.760 | 0.033 | 0.871 | 0.940 | 0.826 | 0.040 |
+| CAM-Net | ICVRV'25 | 448×448 | ResNet50 | 0.842 | 0.908 | 0.785 | 0.047 | 0.838 | 0.910 | 0.730 | 0.028 | 0.871 | 0.931 | 0.815 | 0.035 |
+| SAM-DSA | ICCV'25 | 1024×1024 | SAM-B | 0.875 | <u>0.952</u> | 0.849 | 0.044 | <u>0.887</u> | **0.948** | <u>0.827</u> | 0.022 | 0.896 | **0.959** | <u>0.866</u> | 0.029 |
+| DASFF-Net | DSP'26 | 518×518 | SMT-B | **0.900** | 0.947 | <u>0.873</u> | **0.034** | 0.880 | 0.935 | 0.809 | <u>0.020</u> | 0.897 | 0.939 | 0.860 | <u>0.028</u> |
+| DMLR-Net | EAAI'26 | 518×518 | SMT-B | 0.885 | 0.936 | 0.863 | 0.039 | **0.893** | <u>0.944</u> | **0.834** | **0.018** | **0.903** | 0.947 | <u>0.866</u> | <u>0.028</u> |
+| **RTSRNet-SM** | Ours | 384×384 | SMT-B | <u>0.886</u> | **0.955** | **0.876** | <u>0.035</u> | 0.882 | 0.943 | 0.805 | 0.021 | <u>0.899</u> | <u>0.950</u> | **0.891** | **0.019** |
+| **Compact-Backbone COD Methods** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| TinyCOD | ICASSP'23 | 384×384 | TinyNet | 0.822 | 0.890 | 0.752 | 0.065 | 0.811 | 0.877 | 0.678 | 0.036 | 0.843 | 0.903 | 0.766 | 0.047 |
+| DGNet-S | MIR'23 | 352×352 | EfficientNet-B0 | 0.824 | 0.892 | 0.754 | 0.063 | 0.810 | 0.868 | 0.672 | 0.036 | 0.845 | 0.899 | 0.764 | 0.047 |
+| ASBI | CVIU'23 | 384×384 | EfficientNet-B0 | 0.839 | 0.896 | 0.761 | 0.064 | 0.825 | 0.872 | 0.690 | 0.035 | 0.855 | 0.902 | 0.775 | 0.046 |
+| FINet | SPL'24 | 384×384 | EfficientNet-B0 | 0.828 | 0.890 | 0.752 | 0.065 | 0.817 | 0.883 | 0.686 | 0.034 | 0.847 | 0.904 | 0.771 | 0.047 |
+| BPNet | SPL'25 | 384×384 | EfficientNet-B0 | <u>0.864</u> | 0.913 | 0.815 | <u>0.048</u> | 0.847 | <u>0.909</u> | 0.748 | 0.027 | <u>0.867</u> | 0.919 | 0.812 | <u>0.039</u> |
+| ESNet-E | KBS'25 | 384×384 | EfficientNet-B0 | 0.848 | <u>0.919</u> | <u>0.828</u> | 0.049 | 0.830 | 0.908 | 0.745 | 0.031 | 0.862 | 0.916 | 0.821 | 0.040 |
+| FMLNet | ASOC'26 | 384×384 | MobileViT | 0.822 | 0.888 | 0.755 | 0.067 | 0.823 | 0.894 | 0.704 | 0.033 | 0.850 | 0.909 | 0.780 | 0.045 |
+| ULCOD-Net | CAIS'26 | 384×384 | MobileViT | 0.823 | 0.890 | 0.758 | 0.067 | 0.829 | 0.893 | 0.714 | 0.033 | 0.854 | 0.908 | 0.787 | 0.045 |
+| ECNet | PR'26 | 384×384 | EfficientNet-B0 | 0.856 | 0.913 | 0.787 | 0.049 | <u>0.860</u> | **0.927** | <u>0.780</u> | <u>0.026</u> | <u>0.867</u> | <u>0.927</u> | <u>0.878</u> | **0.020** |
+| **RTSRNet-E** | Ours | 384×384 | EfficientNet-B0 | **0.879** | **0.923** | **0.829** | **0.046** | **0.872** | **0.927** | **0.786** | **0.025** | **0.884** | **0.930** | **0.888** | **0.020** |
+
+---
+
+## Qualitative Comparison
+
+<p align="center">
+  <img src="assets/Fig7_Qtt.png" width="100%">
+</p>
+
+<p align="center">
+  <b>Fig. 7.</b> Qualitative comparison with representative COD methods under challenging camouflage conditions. Red boxes show enlarged regions for small-target comparison.
+</p>
+
+RTSRNet produces cleaner and more coherent predictions under texture ambiguity, geometry ambiguity, weak boundaries, small targets, large targets, and cluttered backgrounds.
+
+---
+
+## Ablation Visualization
+
+<p align="center">
+  <img src="assets/Fig8_Abla.png" width="72%">
+</p>
+
+<p align="center">
+  <b>Fig. 8.</b> Qualitative ablation of SGDEM and TGMM under the same EfficientNet-B0 backbone. The single-module variants are compared with the baseline and the full RTSRNet-E.
+</p>
+
+The visual comparison shows the complementary effects of SGDEM and TGMM: SGDEM suppresses distracting shallow responses and preserves local structures, while TGMM improves target coherence through target-guided geometry refinement.
+
+---
+
+## Downloads
+
+### Trained Model
+
+| Model | Backbone | Input Size | Download |
+|---|---|---:|---|
+| RTSRNet-E | EfficientNet-B0 | 384×384 | [Google Drive](YOUR_RTSRNET_E_PTH_GOOGLE_DRIVE_URL) / [Baidu Netdisk](YOUR_RTSRNET_E_PTH_BAIDU_URL) |
+
+### Training and Testing Data
+
+RTSRNet is trained with **2,026 COD10K training images + 1,000 CAMO training images** and evaluated on **CAMO (250)**, **COD10K (2,026)**, and **NC4K (4,121)**.
+
+For exact reproduction, release the RGB images, masks, edge maps, and the **Depth Anything V2 depth maps used by RTSRNet** in prepared packages:
+
+| Resource | Content | Download |
+|---|---|---|
+| RTSRNet Training Set | CAMO-train + COD10K-train; RGB / GT / Depth / Edge | [Google Drive](YOUR_TRAIN_RGB_DEPTH_GOOGLE_DRIVE_URL) / [Baidu Netdisk](YOUR_TRAIN_RGB_DEPTH_BAIDU_URL) |
+| RTSRNet Testing Sets | CAMO-test + COD10K-test + NC4K; RGB / GT / Depth / Edge | [Google Drive](YOUR_TEST_RGB_DEPTH_GOOGLE_DRIVE_URL) / [Baidu Netdisk](YOUR_TEST_RGB_DEPTH_BAIDU_URL) |
+
+Original RGB/GT datasets:
+
+- **CAMO:** https://drive.google.com/open?id=1h-OqZdwkuPhBvGcVAwmh0f1NGqlH_4B6
+- **COD10K:** https://drive.google.com/file/d/1vRYAie0JcNStcSwagmCq55eirGyMYGm5/view?usp=sharing
+- **NC4K:** https://drive.google.com/file/d/1kzpX_U3gbgO9MuwZIWTuRVpiB7V6yrAQ/view?usp=sharing
+
+The default depth maps in the manuscript are generated offline with **Depth Anything V2**:
+
+- https://github.com/DepthAnything/Depth-Anything-V2
+
+### Prediction Maps / Test Results
+
+| Results | Download |
 |---|---|
-| RTSRNet | `Model.RTSRNet.RTSRNet` |
-| RGB-D projection | `RGBDProjection` |
-| SGDEM | `SGDEM` |
-| SGDB | `SGDB` |
-| DCUB | `DCUB` |
-| Depth-derived geometry | `DepthGeometryExtractor` / SGDEM Sobel geometry |
-| TGMM at decoder stages | `decoder.tgmm4`, `decoder.tgmm3`, `decoder.tgmm2` |
-| GCDUB / final decoder refinement | `GCDUB` / `decoder.gcdub2` |
-| \(P_2,P_3,P_4,P_5\) | `pred_head2`, `pred_head3`, `pred_head4`, `pred_head5` |
-| Edge prediction \(P_e\) | `edge_head` |
+| RTSRNet-E prediction maps on CAMO / COD10K / NC4K | [Google Drive](YOUR_RTSRNET_PREDICTIONS_GOOGLE_DRIVE_URL) / [Baidu Netdisk](YOUR_RTSRNET_PREDICTIONS_BAIDU_URL) |
 
-The refactor is intentionally **name/organization compatible rather than a re-training rewrite**: forward tensor operations from the supplied implementation are preserved to protect the numerical behavior of existing checkpoints.
+---
 
-## Installation
-
-A typical environment can be created with:
+## Environment
 
 ```bash
 conda create -n rtsrnet python=3.10 -y
@@ -73,18 +156,48 @@ conda activate rtsrnet
 pip install -r requirements.txt
 ```
 
-The code was written for PyTorch and supports CUDA when available.
+---
 
-## Dataset Preparation
+## Repository Structure
 
-The training protocol in the manuscript uses the standard COD training split:
+```text
+RTSRNet/
+├── Model/
+│   ├── RTSRNet.py
+│   ├── EfficientNet.py
+│   └── modules.py
+├── utils/
+│   ├── config.py
+│   ├── edge_dataloader.py
+│   ├── metrics.py
+│   └── utils.py
+├── train.py
+├── inference.py
+├── evaluate.py
+├── profile_model.py
+├── analyze_internal_responses.py
+├── requirements.txt
+└── README.md
+```
 
-- 2,026 training images from COD10K
-- 1,000 training images from CAMO
+### Paper-to-Code Mapping
 
-Evaluation is performed on CAMO, COD10K, and NC4K. The bundled evaluation code also supports CHAMELEON.
+| Manuscript | Code |
+|---|---|
+| RTSRNet | `Model.RTSRNet.RTSRNet` |
+| RGB-D projection | `RGBDProjection` |
+| SGDEM | `SGDEM` |
+| SGDB | `SGDB` |
+| DCUB | `DCUB` |
+| Depth-derived geometry | `DepthGeometryExtractor` |
+| TGMM | `TGMM` |
+| GCDUB | `GCDUB` |
+| Prediction maps P2/P3/P4/P5 | `pred_head2` / `pred_head3` / `pred_head4` / `pred_head5` |
+| Edge prediction | `edge_head` |
 
-The repository expects the following layout:
+---
+
+## Dataset Organization
 
 ```text
 DATA_ROOT/
@@ -104,27 +217,16 @@ DATA_ROOT/
     │   ├── GT/
     │   ├── Depth/
     │   └── Edge/
-    ├── NC4K/
-    │   ├── Imgs/
-    │   ├── GT/
-    │   ├── Depth/
-    │   └── Edge/
-    └── CHAMELEON/
+    └── NC4K/
         ├── Imgs/
         ├── GT/
         ├── Depth/
         └── Edge/
 ```
 
-Pass the root directory with `--dataset_dir`.
+---
 
-### Depth Maps
-
-The manuscript uses **Depth Anything V2** as the default monocular depth estimator. Depth maps are generated offline; the depth estimator is not part of RTSRNet and its cost is not included in COD-network complexity.
-
-This repository expects the generated depth maps to already be present in the `Depth/` directories and spatially matched to the RGB images.
-
-## Model Construction
+## Model
 
 ```python
 from Model.RTSRNet import RTSRNet
@@ -135,62 +237,22 @@ model = RTSRNet(
 )
 ```
 
-For the paper-facing RTSRNet-E model, use `ablation_mode="full"`.
-
-The historical modes `baseline`, `dgp`, `dgp_dls`, `idls`, and `goodr` are retained only to keep old experiments/checkpoints usable. They correspond to internal development ablations and should not be confused with the manuscript's SGDEM/TGMM component-ablation table.
-
-## Loading the Original `.pth`
-
-Existing checkpoints saved by the original `GoodRT_v2` code can be loaded directly.
+### Load Trained Weights
 
 ```python
 import torch
 from Model.RTSRNet import RTSRNet, extract_state_dict
 
-ckpt = torch.load("best.pth", map_location="cpu")
-state = extract_state_dict(ckpt, use_ema=True)
-
 model = RTSRNet(pretrained=False, ablation_mode="full")
-model.load_state_dict(state, strict=True)
+checkpoint = torch.load("RTSRNet-E.pth", map_location="cpu")
+state_dict = extract_state_dict(checkpoint, use_ema=True)
+model.load_state_dict(state_dict, strict=True)
 model.eval()
 ```
 
-The loader automatically translates legacy names such as:
-
-```text
-pseudo_rgbd_adapter.*  -> rgbd_projection.*
-gsdt.*                 -> sgdem.*
-gsdt.liquid_residual.* -> sgdem.dcub.*
-decoder.dls_p4.*       -> decoder.tgmm4.*
-decoder.dls_p3.*       -> decoder.tgmm3.*
-decoder.dls_p2.*       -> decoder.tgmm2.*
-decoder.mask1.*         -> decoder.pred_head2.*
-...
-```
-
-No checkpoint tensor is numerically modified.
-
-### Check a Checkpoint
-
-```bash
-python tools/check_checkpoint.py \
-  --ckpt /path/to/best.pth \
-  --ablation_mode full
-```
-
-A successful run reports strict loading and performs a small forward smoke test.
-
-> The source archive used for this refactor did **not** include the actual trained `.pth`; therefore the repository includes an automated compatibility test and checker, but you should run the command above once on the final released checkpoint before publishing.
+---
 
 ## Training
-
-The manuscript-facing default uses four-scale structure-aware mask supervision plus auxiliary edge supervision:
-
-\[
-L = L_{\mathrm{mask}} + 0.05 L_{\mathrm{edge}}.
-\]
-
-Run:
 
 ```bash
 python train.py \
@@ -202,140 +264,91 @@ python train.py \
   --amp
 ```
 
-Default optimization settings are aligned with the manuscript:
+Main settings:
 
-- optimizer: AdamW
-- epochs: 180
-- batch size: 16
-- input size: 384 × 384
-- initial learning rate: \(3\times10^{-4}\)
-- minimum learning rate: \(1\times10^{-6}\)
-- weight decay: \(1\times10^{-4}\)
-- backbone learning-rate multiplier: 0.2
-- EMA decay: 0.999
+| Setting | Value |
+|---|---|
+| Optimizer | AdamW |
+| Epochs | 180 |
+| Batch size | 16 |
+| Input size | 384×384 |
+| Initial learning rate | 3×10^-4 |
+| Minimum learning rate | 1×10^-6 |
+| Weight decay | 1×10^-4 |
+| Backbone LR multiplier | 0.2 |
+| EMA decay | 0.999 |
 
-### Legacy Training Loss
-
-The original `GoodRT_v2` training script contained an additional reliability/target-control auxiliary loss. This refactor disables it by default so the public training command follows the manuscript loss.
-
-To reproduce the **old training-script behavior** rather than the manuscript-facing default, add:
-
-```bash
---legacy_control_loss --rel_loss_weight 0.05
-```
-
-This option does not affect checkpoint loading or inference.
+---
 
 ## Inference
 
 ```bash
 python inference.py \
-  --ckpt /path/to/best.pth \
+  --ckpt /path/to/RTSRNet-E.pth \
   --dataset_dir /path/to/DATA_ROOT \
   --datasets CAMO COD10K NC4K \
   --ablation_mode full
 ```
 
-By default, if a checkpoint contains EMA weights, inference uses `ema_model`. Add `--use_raw` to use the raw `model` state instead.
-
-Prediction maps are written to the configured output directory.
+---
 
 ## Evaluation
 
-If prediction maps already exist:
-
 ```bash
 python evaluate.py \
-  --ckpt /path/to/best.pth \
+  --ckpt /path/to/RTSRNet-E.pth \
   --dataset_dir /path/to/DATA_ROOT \
   --datasets CAMO COD10K NC4K \
   --save_json
 ```
 
-The bundled evaluator reports the metrics used in the manuscript:
+Metrics:
 
-- \(S_{\alpha}\): structure measure
-- \(E_{\phi}^{ad}\): adaptive enhanced-alignment measure
-- \(F_{\beta}^{\omega}\): weighted F-measure
-- \(M\): mean absolute error
+- **Sα**: structure measure
+- **Eφad**: adaptive enhanced-alignment measure
+- **Fβω**: weighted F-measure
+- **M**: mean absolute error
 
-If predictions are missing, `evaluate.py` can invoke inference first.
+---
 
-## Profiling
-
-```bash
-python profile_model.py \
-  --ckpt /path/to/best.pth \
-  --img_size 384 \
-  --batch_size 1 \
-  --device cuda \
-  --amp
-```
-
-Install `thop` to report MACs/FLOPs:
-
-```bash
-pip install thop
-```
-
-The script reports parameters, a module-level parameter breakdown, MACs/FLOPs when available, latency, and FPS.
-
-## Internal Response Analysis
-
-The manuscript's internal-response visualizations can be supported through:
+## Internal Response Visualization
 
 ```bash
 python analyze_internal_responses.py --help
 ```
 
-The analysis interface uses the paper-facing `sgdem` and `tgmm*` names. The old `analyze_bridge_diagnostics.py` filename is retained as a deprecated entry point.
+This script supports the supplementary qualitative analysis of SGDEM and TGMM internal responses.
 
-## One-Command Pipeline
-
-The bundled pipeline can run training, inference, evaluation, and analysis:
-
-```bash
-python go.py \
-  --data /path/to/DATA_ROOT \
-  --mode full
-```
-
-or:
-
-```bash
-bash go.sh /path/to/DATA_ROOT
-```
-
-## Checkpoint Compatibility Test
-
-Run:
-
-```bash
-python tests/test_checkpoint_compat.py
-```
-
-The test creates a model, converts its state dictionary into the legacy GoodRT_v2 naming convention, strictly reloads it through the RTSRNet compatibility layer, and checks that evaluation outputs are bit-identical.
-
-## Important Reproducibility Notes
-
-1. **Checkpoint compatibility was prioritized.** The refactor changes names and organization but intentionally avoids changing trained forward tensor operations.
-2. **The provided source archive contains the EfficientNet-B0 implementation.** The manuscript also reports SMT-B and PVTv2-B4 variants, but their backbone implementations were not present in the supplied archive and are therefore not invented in this release.
-3. **Depth generation is external.** Generate depth maps offline and place them in the expected folders.
-4. **Paper loss vs. historical training script.** The default training loss in this release follows the manuscript. The previous auxiliary control loss remains available only behind `--legacy_control_loss`.
-5. Before public release, validate the final distributed checkpoint with `tools/check_checkpoint.py`.
-
-## Legacy Name Migration
-
-See [`MIGRATION.md`](MIGRATION.md) for a more detailed old-to-new naming table.
+---
 
 ## Citation
 
-The bibliographic record was not included in the supplied project archive. Add the final publisher-provided BibTeX entry here after the article is accepted/published; this README intentionally does not invent author, journal, DOI, or year metadata.
+If you find RTSRNet useful in your research, please cite our work:
+
+```bibtex
+@misc{song2026rtsrnet,
+  title={RTSRNet: Residual Target-Sensitive Refinement Network for Depth-Assisted Camouflaged Object Detection},
+  author={Song, Tan and Li, Jinbao},
+  year={2026},
+  note={Manuscript submitted to IEEE Transactions on Multimedia (TMM)}
+}
+```
+
+After acceptance/publication, replace this entry with the official IEEE Xplore BibTeX record and DOI.
+
+---
+
+## Contact
+
+- **Tan Song:** 1223114@s.hlju.edu.cn
+- **Jinbao Li:** lijinb@sdas.org
+
+---
 
 ## Acknowledgements
 
-The implementation uses an EfficientNet-B0 encoder and standard COD evaluation metrics. Please also cite the corresponding original works and datasets used in your experiments.
+We thank the authors of CAMO, COD10K, NC4K, Depth Anything V2, and the open-source COD community for their datasets and implementations.
 
 ## License
 
-No license file was present in the supplied source archive. Choose and add the intended repository license before making the GitHub repository public.
+Please add the intended open-source license before making the repository public.

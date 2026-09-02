@@ -145,22 +145,6 @@ RTSRNet/
 ├── requirements.txt
 └── README.md
 ```
-
-### Paper-to-Code Mapping
-
-| Manuscript | Code |
-|---|---|
-| RTSRNet | `Model.RTSRNet.RTSRNet` |
-| RGB-D projection | `RGBDProjection` |
-| SGDEM | `SGDEM` |
-| SGDB | `SGDB` |
-| DCUB | `DCUB` |
-| Depth-derived geometry | `DepthGeometryExtractor` |
-| TGMM | `TGMM` |
-| GCDUB | `GCDUB` |
-| Prediction maps P2/P3/P4/P5 | `pred_head2` / `pred_head3` / `pred_head4` / `pred_head5` |
-| Edge prediction | `edge_head` |
-
 ---
 
 ## Dataset Organization

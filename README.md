@@ -84,28 +84,26 @@ The visual comparison shows the complementary effects of SGDEM and TGMM: SGDEM s
 
 | Model | Backbone | Input Size | Download |
 |---|---|---:|---|
-| RTSRNet-E | EfficientNet-B0 | 384×384 | [Google Drive]([https://drive.google.com/file/d/1u7_Jdv6xFtnHYQkn2B2jBnKzlB5ppc2J/view?usp=drive_link])|
+| RTSRNet-E | EfficientNet-B0 | 384×384 | [Google Drive](https://drive.google.com/file/d/1u7_Jdv6xFtnHYQkn2B2jBnKzlB5ppc2J/view?usp=drive_link) |
 
 ### Training and Testing Data
 
 RTSRNet is trained with **2,026 COD10K training images + 1,000 CAMO training images** and evaluated on **CAMO (250)**, **COD10K (2,026)**, and **NC4K (4,121)**.
 
-For exact reproduction, release the RGB images, masks, edge maps, and the **Depth Anything V2 depth maps used by RTSRNet** in prepared packages:
+For reproducibility, we provide the prepared depth maps used by RTSRNet and the corresponding dataset organization files.
 
 | Resource | Content | Download |
 |---|---|---|
-| Depth Maps | Train/Test Depth Maps (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link]) |
-| COD_Datasets | Imgs, GT, Edge (CAMO, COD10K, NC4K) | [Google Drive]([https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link]) |
+| Depth Maps | Train/Test depth maps for CAMO, COD10K, and NC4K | [Google Drive](https://drive.google.com/file/d/16gyUM6YsjWGIE5YXqXViJTHfDiWPTohE/view?usp=drive_link) |
+| COD Datasets | Images, GT masks, and edge maps for CAMO, COD10K, and NC4K | [Google Drive](https://drive.google.com/file/d/15wf2iEi7u1g3LMxcAHAt_EWl-erddMvS/view?usp=drive_link) |
 
-The default depth maps in the manuscript are generated offline with **Depth Anything V2**:
-
-- https://github.com/DepthAnything/Depth-Anything-V2
+The default depth maps used in the manuscript are generated offline with **Depth Anything V2**.
 
 ### Prediction Maps / Test Results
 
 | Results | Download |
 |---|---|
-| RTSRNet-E prediction maps on CAMO / COD10K / NC4K | [Google Drive]([https://drive.google.com/file/d/1SMPq3khh-XdGtE1ztP8npW6vGxyHU6VG/view?usp=drive_link]) |
+| RTSRNet-E prediction maps on CAMO, COD10K, and NC4K | [Google Drive](https://drive.google.com/file/d/1SMPq3khh-XdGtE1ztP8npW6vGxyHU6VG/view?usp=drive_link) |
 
 ---
 
@@ -253,4 +251,7 @@ We thank the authors of CAMO, COD10K, NC4K, Depth Anything V2, and the open-sour
 
 ## License
 
-Please add the intended open-source license before making the repository public.
+The source code of RTSRNet is released under the MIT License. Please see the `LICENSE` file for details.
+
+The datasets and third-party resources used in this project are subject to their respective licenses and terms of use.
+
